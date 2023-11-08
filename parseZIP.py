@@ -99,43 +99,56 @@ valid_city = [
     'ZA']
 
 
-def check_city_code(value):
+def check_country_code(value):
     if value not in valid_zip:
         raise ValueError(f"City code '{value}' unknow. " +
                          f"Valids city codes are :\n{', '.join(valid_zip)}.")
     return value
 
 
+def write_data(file, list):
+    """Write data to a file."""
+    file.write(''.join(list))
+
+
 def print_data(data):
-    for key, value in data.items():
-        if key != 'places':
-            print(f"{key.capitalize()} : {value}")
-        else:
-            print("Places data:")
-            if isinstance(value, dict):
-                for k_val, val in value.items():
-                    print(k_val, val)
-            if isinstance(value, list):
-                for item in value:
-                    for k_val, val in item.items():
-                        print(f"   - {k_val.capitalize()} : {val}")
+    with open('zip-extract.txt', 'w') as file:
+        print("-------------------------------------")
+        for key, value in data.items():
+            if key != 'places':
+                write_data(file, [key.capitalize(), " : ", value, "\n"])
+                print(f"{key.capitalize()} : {value}")
+            else:
+                write_data(file, ["Places data:\n"])
+                print("Place.s data:")
+                if isinstance(value, dict):
+                    for k_val, val in value.items():
+                        write_data(file, [
+                            " . ", k_val.capitalize(), " : ", val, "\n"])
+                        print(f" . {k_val.capitalize()} : {val}")
+                elif isinstance(value, list):
+                    for item in value:
+                        for k_val, val in item.items():
+                            write_data(file, [
+                                "   - ", k_val.capitalize(), " : ", val, "\n"])
+                            print(f"   - {k_val.capitalize()} : {val}")
 
 
 try:
     api_url = config('ZPP_URL')
     if api_url:
-        city_code = input("Enter City Code (2 letters): ")
-        zip_code = input("Enter code Zip: ")
+        country_code = input("> Enter country (2 letters): ")
+        zip_code = input("> Enter zip or state/city: ")
     else:
         raise ValueError("No API found check .env file")
-    city_code = check_city_code(city_code.upper())
-    api_url += '/' + city_code + '/' + zip_code
+    country_code = check_country_code(country_code.upper())
+    api_url += '/' + country_code + '/' + zip_code
     response = requests.get(api_url)
     response.raise_for_status()  # Check for HTTP status code errors
     if response.status_code != 200:
         raise ValueError(
             "Failed and get info from API.\n" +
-            f"Zip of '{city_code}' must be between {valid_zip[city_code]}.")
+            f"Zip of '{country_code}' must be between {valid_zip[country_code]}.")
     data = response.json()
     print_data(data)
 except requests.exceptions.ConnectionError as ce:
