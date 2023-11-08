@@ -1,5 +1,4 @@
 import requests
-import sys
 from decouple import config
 
 # api_to_test = {

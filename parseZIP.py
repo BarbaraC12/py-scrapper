@@ -135,7 +135,7 @@ try:
     if response.status_code != 200:
         raise ValueError(
             "Failed and get info from API.\n" +
-            f"Zip code of '{city_code}' must be between {valid_zip[city_code]}.")
+            f"Zip of '{city_code}' must be between {valid_zip[city_code]}.")
     data = response.json()
     print_data(data)
 except requests.exceptions.ConnectionError as ce:
