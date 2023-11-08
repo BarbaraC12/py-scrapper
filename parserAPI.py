@@ -1,5 +1,6 @@
 import requests
-# from decouple import Config
+import sys
+from decouple import config
 
 # api_to_test = {
 #   "https://www.themoviedb.org/documentation/api",
@@ -11,20 +12,15 @@ import requests
 #   "https://developers.giphy.com/"
 #   }
 # https://talks.freelancerepublik.com/api-publiques-gratuites-developpement-site-app/
-api_url = "https://api.zippopotam.us/fr/31530"
+api_url = config('API_URL')
 
-# That don't work with .env I've to search why
-# config = Config('.env')
-# api_url = config.get('API_URL')
-# api_uid = config.get('API_UID')
-# api_secret = config.get('API_SECRET')
+auth_data = {
+    'uid': config('API_UID'),
+    'secret': config('API_SECRET')
+}
 
-# auth_data = {
-#     'uid': api_uid,
-#     'secret': api_secret
-# }
 
-response = requests.get(api_url)
+response = requests.get(api_url, params=auth_data) if auth_data['uid'] or auth_data['secret'] else requests.get(api_url)
 
 if response.status_code != 200:
     print("Failed to get data from API")
