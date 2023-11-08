@@ -111,7 +111,10 @@ def print_data(data):
         if key != 'places':
             print(f"{key.capitalize()} : {value}")
         else:
-            print("Place data:")
+            print("Places data:")
+            if isinstance(value, dict):
+                for k_val, val in value.items():
+                    print(k_val, val)
             if isinstance(value, list):
                 for item in value:
                     for k_val, val in item.items():
